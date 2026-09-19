@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import AlternateLanding from "@/components/AlternateLanding";
+import FieldNotesLanding from "@/components/FieldNotesLanding";
 import {
   ArrowDownRight, ArrowUpRight, Check, ChevronRight, CircleDot, GitBranch,
   GitPullRequest, Inbox, LockKeyhole, Menu, MessageSquare, ScanSearch,
@@ -18,6 +20,27 @@ const principles = [
   ["Transparent by design", "Actions are grounded in visible policy and clear reasoning."],
   ["Yours to shape", "Start with sensible defaults. Tune the rules as your community grows."],
 ];
+
+function LandingPicker({ onSelect }: { onSelect: (landing: "current" | "alternate" | "field-notes") => void }) {
+  return (
+    <main className="landing-picker">
+      <div className="picker-grid" aria-hidden="true" />
+      <div className="picker-content">
+        <div className="picker-brand"><span className="brand-mark"><span /><span /><span /></span><span>OpenMaintainer</span></div>
+        <span className="picker-kicker">Choose your experience</span>
+        <h1>Two ways to give<br /><em>your repo room.</em></h1>
+        <p>Explore the original OpenMaintainer story or step into a sharper, more editorial take on autonomous maintenance.</p>
+        <div className="picker-actions">
+          <button className="picker-button picker-button-primary" onClick={() => onSelect("current")}><span><b>01</b><strong>The Maintainer</strong><small>Warm, calm, policy-first</small></span><ArrowUpRight size={19} /></button>
+          <button className="picker-button picker-button-secondary" onClick={() => onSelect("alternate")}><span><b>02</b><strong>Signal / Noise</strong><small>Bold, editorial, operations-led</small></span><ArrowUpRight size={19} /></button>
+          <button className="picker-button picker-button-tertiary" onClick={() => onSelect("field-notes")}><span><b>03</b><strong>Field Notes</strong><small>Human, considered, community-led</small></span><ArrowUpRight size={19} /></button>
+        </div>
+        <div className="picker-note"><span className="picker-note-line" /> Both experiences are built for open source teams.</div>
+      </div>
+      <div className="picker-orbit picker-orbit-a" /><div className="picker-orbit picker-orbit-b" />
+    </main>
+  );
+}
 
 function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const [visible, setVisible] = useState(false);
@@ -38,6 +61,7 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [landing, setLanding] = useState<"picker" | "current" | "alternate" | "field-notes">("picker");
 
   useEffect(() => {
     const updateProgress = () => {
@@ -48,6 +72,10 @@ export default function Home() {
     window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
+
+  if (landing === "picker") return <LandingPicker onSelect={setLanding} />;
+  if (landing === "alternate") return <AlternateLanding onBack={() => setLanding("picker")} />;
+  if (landing === "field-notes") return <FieldNotesLanding onBack={() => setLanding("picker")} />;
 
   return (
     <main className="site-shell" id="top">
