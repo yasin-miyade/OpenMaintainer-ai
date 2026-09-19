@@ -11,7 +11,7 @@
         "build/**"
       ]
     },
-    "dev": {f
+    "dev": {
       "cache": false,
       "persistent": true
     },
